@@ -18,5 +18,5 @@ typedef struct Token {
 } Token;
 
 
-char** tokenize(char* program); // tokenizes the program text
+char** tokenize(char* program, unsigned int length); // tokenizes the program text
 
