@@ -1,24 +1,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "scanner.h"
+#include "parser.h"
 
 int main() {
     char program[] = "(begin (define r 10) (* pi (* r r)))";
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram)/2;
-    char** tokens = tokenize(sprogram, length);
+    TokenList tokenlist = tokenize(sprogram, length);
     
-    for(int i = 0; i < length; i++) {
-        printf("Token: %s\n", tokens[i]);
+    for(int i = 0; i < tokenlist.len; i++) {
+        printf("Token: %s\n", tokenlist.list[i]);
     }
+
     // freeing sprogram
     free(sprogram);
-
-    // freeing the allocated tokens
-    for(int i = 0; i < length; i++) {
-        free(tokens[i]);
+    
+    // freeing tokenlist
+    for (int i = 0; i < length; i++){
+        free(tokenlist.list[i]);
     }
-    free(tokens);
+    free(tokenlist.list);
+    
     return 0;
 }

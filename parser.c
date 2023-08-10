@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "scanner.h"
+#include "parser.h"
 
 char* pretokenize(char* program) {
     // allocate memory of length, which is 3 * program in worst case
@@ -31,17 +31,17 @@ char* pretokenize(char* program) {
     return sprogram;
 }
 
-
-
-char** tokenize(char* program, unsigned int length) {
+TokenList tokenize(char* program, unsigned int length) {
     // length must be half of the program length according to worst case due to pretokenize()
     
     // strtok() to tokenize the items separated by space
     const char* delim = " ";
     char* token = strtok(program, delim);
-
-    char** result = (char**) malloc((length) * sizeof(char*));
-    if (result == NULL) {
+    
+    TokenList tokenlist;
+    tokenlist.list = (char**) malloc(length * sizeof(char*));
+    
+    if (tokenlist.list == NULL) {
         fprintf(stderr, "Memory cannot be allocated!");
         exit(1);
     }
@@ -49,14 +49,17 @@ char** tokenize(char* program, unsigned int length) {
     // further tokenization and creating token list
     unsigned int i = 0;
     while(token != NULL) {
-        result[i] = (char*) malloc(strlen(token) + 1);
-        if (result[i] == NULL) {
+        tokenlist.list[i] = (char*) malloc(strlen(token) + 1);
+        if (tokenlist.list[i] == NULL) {
             fprintf(stderr, "Memory cannot be allocated!");
             exit(1);
     }
-        strncpy(result[i], token, strlen(token));
+        strncpy(tokenlist.list[i], token, strlen(token));
         token = strtok(NULL, delim);
         i++;
     }
-    return result;
+    
+    tokenlist.len = i;
+    
+    return tokenlist;
 }
