@@ -22,7 +22,7 @@ typedef struct Token {
 } Token;
 
 typedef struct SyntaxTree {
-    char* exp;
+    Token token;
     struct SyntaxTree* left;
     struct SyntaxTree* right;
 } SyntaxTree;
