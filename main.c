@@ -5,13 +5,16 @@
 
 int main() {
     char program[] = "(begin (define r 10) (* pi (* r r)))";
-    unsigned int length = strlen(program);
-    char** tokens = tokenize(program, length);
+    char* sprogram = pretokenize(program);
+    unsigned int length = strlen(sprogram)/2;
+    char** tokens = tokenize(sprogram, length);
     
     for(int i = 0; i < length; i++) {
         printf("Token: %s\n", tokens[i]);
     }
-    
+    // freeing sprogram
+    free(sprogram);
+
     // freeing the allocated tokens
     for(int i = 0; i < length; i++) {
         free(tokens[i]);
