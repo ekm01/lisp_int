@@ -63,3 +63,51 @@ TokenList tokenize(char* program, unsigned int length) {
     
     return tokenlist;
 }
+
+SyntaxTree* createNode(char* token) {
+    SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
+    if (newNode != NULL) {
+        newNode->token = token;
+        newNode->left = NULL;
+        newNode->right = NULL;
+    }
+
+    return newNode;
+}
+
+
+SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root) {
+
+    if (strcmp(tokens[i], "(") == 0) {
+       i++;
+       while (strcmp(tokens[i], ")") != 0) {
+           if (root == NULL) {
+               root = createNode(tokens[i]);
+               i++;
+           }
+           if (root->left == NULL) {
+               root->left = constructST(tokens, tokenNum, i, root->left);
+
+           }
+           else {
+               root->right = constructST(tokens, tokenNum, i, root->right);
+
+           }
+           i++;
+       }
+       if (i == tokenNum - 1) {
+           return root;
+       }
+       i++;
+       root->right = constructST(tokens, tokenNum, i, root->right);
+       return root;
+    }
+    else if (strcmp(tokens[i], ")") == 0) {
+        fprintf(stderr, "Syntax Error occured!");
+        exit(1);
+    }
+    else {
+        return createNode(tokens[i]);
+    }
+    return NULL;
+}

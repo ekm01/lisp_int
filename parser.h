@@ -22,7 +22,7 @@ typedef struct Token {
 } Token;
 
 typedef struct SyntaxTree {
-    Token token;
+    char* token;
     struct SyntaxTree* left;
     struct SyntaxTree* right;
 } SyntaxTree;
@@ -31,4 +31,6 @@ char* pretokenize(char* program); // insert spaces around parentheses and operat
 
 TokenList tokenize(char* program, unsigned int length); // tokenizes the program text, returns the tokenlist and size
 
+SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root);
 
+SyntaxTree* createNode(char* token);
