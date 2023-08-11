@@ -34,5 +34,7 @@ TokenList tokenize(char* program, unsigned int length); // tokenizes the program
 
 // construct a syntax tree according to the token list
 SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root);
-                                                                                                 
+
 SyntaxTree* createNode(char* token);
+
+SyntaxTree* parse(char* program);
