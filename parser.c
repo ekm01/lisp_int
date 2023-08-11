@@ -8,7 +8,7 @@ char* pretokenize(char* program) {
     char* sprogram = (char*) calloc((3 * strlen(program)) + 1, sizeof(char));
    
     if (sprogram == NULL) {
-        fprintf(stderr, "Memory cannot be allocated!");
+        fprintf(stderr, "Memory cannot be allocated!\n");
         exit(1);
     }
 
@@ -42,7 +42,7 @@ TokenList tokenize(char* program, unsigned int length) {
     tokenlist.list = (char**) malloc(length * sizeof(char*));
     
     if (tokenlist.list == NULL) {
-        fprintf(stderr, "Memory cannot be allocated!");
+        fprintf(stderr, "Memory cannot be allocated!\n");
         exit(1);
     }
     
@@ -51,7 +51,7 @@ TokenList tokenize(char* program, unsigned int length) {
     while(token != NULL) {
         tokenlist.list[i] = (char*) malloc(strlen(token) + 1);
         if (tokenlist.list[i] == NULL) {
-            fprintf(stderr, "Memory cannot be allocated!");
+            fprintf(stderr, "Memory cannot be allocated!\n");
             exit(1);
     }
         strncpy(tokenlist.list[i], token, strlen(token));
@@ -75,35 +75,30 @@ SyntaxTree* createNode(char* token) {
     return newNode;
 }
 
-
 SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root) {
 
     if (strcmp(tokens[i], "(") == 0) {
        i++;
-       while (strcmp(tokens[i], ")") != 0) {
+       while (strcmp(tokens[i], ")") != 0 && i < tokenNum) {
            if (root == NULL) {
                root = createNode(tokens[i]);
                i++;
            }
            if (root->left == NULL) {
                root->left = constructST(tokens, tokenNum, i, root->left);
-
+               i++;
            }
-           else {
+           if (root->left != NULL && root->right == NULL) {
                root->right = constructST(tokens, tokenNum, i, root->right);
-
            }
            i++;
        }
-       if (i == tokenNum - 1) {
-           return root;
-       }
        i++;
-       root->right = constructST(tokens, tokenNum, i, root->right);
+       root->i = i;
        return root;
     }
     else if (strcmp(tokens[i], ")") == 0) {
-        fprintf(stderr, "Syntax Error occured!");
+        fprintf(stderr, "Syntax Error occured!\n");
         exit(1);
     }
     else {

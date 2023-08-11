@@ -3,21 +3,31 @@
 #include <stdlib.h>
 #include "parser.h"
 
+void inorderTraversal(SyntaxTree *root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%s\n", root->token);
+        inorderTraversal(root->right);
+    }
+}
+
 int main() {
-    char program[] = "(+ (- 3 4) 7)";
+    char program[] = "(begin (define r 10) (* pi (* r r)))";
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
-    
+     
     for(int i = 0; i < tokenlist.len; i++) {
         printf("Token: %s\n", tokenlist.list[i]);
     }
 
-    SyntaxTree* st = constructST(tokenlist.list, tokenlist.len, 0, NULL);
-    printf("%s\n", st->token);
-    printf("%s\n", st->left->token);
-    printf("%s\n", st->left->left->token);
-    printf("%s\n", st->right->token);
+    SyntaxTree* leftSubtree = constructST(tokenlist.list, tokenlist.len, 0, NULL);
+    SyntaxTree* rightSubtree = constructST(tokenlist.list, tokenlist.len, leftSubtree->i, NULL);
+    
+    leftSubtree->right = rightSubtree;
+    
+    inorderTraversal(leftSubtree);
+    
 
     // freeing sprogram
     free(sprogram);
