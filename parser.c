@@ -49,26 +49,23 @@ TokenList tokenize(char* program, unsigned int length) {
     // further tokenization and creating token list
     unsigned int i = 0;
     while(token != NULL) {
-        tokenlist.list[i] = (char*) malloc(strlen(token) + 1);
+        tokenlist.list[i] = token;
         if (tokenlist.list[i] == NULL) {
             fprintf(stderr, "Memory cannot be allocated!\n");
             exit(1);
     }
-        strncpy(tokenlist.list[i], token, strlen(token));
         token = strtok(NULL, delim);
         i++;
     }
     
     tokenlist.len = i;
-    
     return tokenlist;
 }
 
 SyntaxTree* createNode(char* token) {
     SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     if (newNode != NULL) {
-        newNode->token = (char*) malloc(strlen(token) + 1);
-        strncpy(newNode->token, token, strlen(token));
+        newNode->token = token;
         newNode->left = NULL;
         newNode->right = NULL;
         return newNode;
@@ -113,48 +110,27 @@ SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, Sy
     return NULL;
 }
 
-SyntaxTree* parse(char* program) {
+ParseRet parse(char* program) {
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
     SyntaxTree* leftSubtree = constructST(tokenlist.list, tokenlist.len, 0, NULL);
     
+    ParseRet pt;
+    pt.tokenlist = tokenlist.list;
+    pt.sprogram = sprogram;
+    
     if (leftSubtree != NULL){
         if (leftSubtree->i > tokenlist.len - 1) {
-            
-            // freeing
-            free(sprogram);
-
-            for (int i = 0; i < length; i++){
-                free(tokenlist.list[i]);
-            }
-            free(tokenlist.list);
- 
-            return leftSubtree;
+            pt.st = leftSubtree;
+            return pt;
         }
         else {
             SyntaxTree* rightSubtree = constructST(tokenlist.list, tokenlist.len, leftSubtree->i, NULL);
             leftSubtree->right = rightSubtree;
-            
-            // freeing
-            free(sprogram);
-
-            for (int i = 0; i < length; i++){
-                free(tokenlist.list[i]);
-            }
-            free(tokenlist.list);
-            
-            return leftSubtree;
+            pt.st = leftSubtree;         
+            return pt;
         }
     }
-    
-    // freeing
-    free(sprogram);
-
-    for (int i = 0; i < length; i++){
-        free(tokenlist.list[i]);
-    }
-    free(tokenlist.list);
-    
-    return NULL;
+    return pt;
 }

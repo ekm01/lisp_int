@@ -13,7 +13,10 @@ void inorderTraversal(SyntaxTree* root) {
 
 int main() {
     char program[] = "(begin (define r 10) (* pi (* r r)))";
-    SyntaxTree* st = parse(program); 
-    inorderTraversal(st);
+    ParseRet pt = parse(program);
+    inorderTraversal(pt.st);
+    
+    free(pt.sprogram);
+    free(pt.tokenlist);
     return 0;
 }

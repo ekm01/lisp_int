@@ -28,6 +28,12 @@ typedef struct SyntaxTree {
     struct SyntaxTree* right;
 } SyntaxTree;
 
+typedef struct ParseRet {
+    SyntaxTree* st;
+    char* sprogram;
+    char** tokenlist;
+} ParseRet;
+
 char* pretokenize(char* program); // insert spaces around parentheses and operators, returns new program
 
 TokenList tokenize(char* program, unsigned int length); // tokenizes the program text, returns the tokenlist and size
@@ -37,4 +43,4 @@ SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, Sy
 
 SyntaxTree* createNode(char* token);
 
-SyntaxTree* parse(char* program);
+ParseRet parse(char* program);
