@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "parser.h"
 
 char* pretokenize(char* program) {
@@ -62,19 +63,50 @@ TokenList tokenize(char* program, unsigned int length) {
     return tokenlist;
 }
 
+long int isInt(char* token) {
+    char* end;
+    errno = 0;
+    long int res = strtol(token, &end, 10);
+    
+    if (errno == 0 && *end == '\0') {
+        return res;
+    }
+    return 0;
+}
+
+double isFloat(char* token) {
+    char* end;
+    errno = 0;
+    double res = strtod(token, &end);
+    
+    if (errno == 0 && *end == '\0') {
+        return res;
+    }
+    return 0.0;
+}
+
 SyntaxTree* createNode(char* token) {
     SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     if (newNode != NULL) {
-        newNode->token = token;
-        newNode->left = NULL;
-        newNode->right = NULL;
+        if(isInt(token) != 0) {
+            newNode->token.val.intVal = isInt(token); 
+            newNode->token.type = NUMBER;
+        }
+        else if (isFloat(token) != 0) {
+            newNode->token.val.dobVal = isFloat(token); 
+            newNode->token.type = NUMBER;
+        }
+        else {
+            newNode->token.val.symVal = token;
+            newNode->token.type = SYMBOL;
+        }
         return newNode;
     }
    fprintf(stderr, "Memory cannot be allocated!\n");
    exit(1);
 }
 
-SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root) {
+/*SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root) {
 
     if (strcmp(tokens[i], "(") == 0) {
        i++;
@@ -115,11 +147,11 @@ ParseRet parse(char* program) {
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
     SyntaxTree* leftSubtree = constructST(tokenlist.list, tokenlist.len, 0, NULL);
-    
+
     ParseRet pt;
     pt.tokenlist = tokenlist.list;
     pt.sprogram = sprogram;
-    
+
     if (leftSubtree != NULL){
         if (leftSubtree->i > tokenlist.len - 1) {
             pt.st = leftSubtree;
@@ -128,9 +160,9 @@ ParseRet parse(char* program) {
         else {
             SyntaxTree* rightSubtree = constructST(tokenlist.list, tokenlist.len, leftSubtree->i, NULL);
             leftSubtree->right = rightSubtree;
-            pt.st = leftSubtree;         
+            pt.st = leftSubtree;
             return pt;
         }
     }
     return pt;
-}
+}*/

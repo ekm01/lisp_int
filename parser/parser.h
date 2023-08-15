@@ -6,26 +6,24 @@ typedef struct TokenList {
 } TokenList;
 
 typedef enum TokenType {
-    LEFTBR,
-    RIGHTBR,
     SYMBOL,
     NUMBER,
-    STRING,
-    BOOL,
-    TOK_EOF,
 } TokenType;
+
+typedef union Value {
+   char* symVal; // value of a symbol token
+   long int intVal; // actual value of a number token
+   double dobVal;
+} Value;
 
 typedef struct Token {
    TokenType type;
-   char* lexeme; // string which appears in code
-   char* literal; // actual value of string
+   Value val;
 } Token;
 
 typedef struct SyntaxTree {
-    char* token;
-    unsigned int i;
-    struct SyntaxTree* left;
-    struct SyntaxTree* right;
+    Token token;
+    struct SyntaxTree** params;
 } SyntaxTree;
 
 typedef struct ParseRet {
@@ -40,6 +38,10 @@ TokenList tokenize(char* program, unsigned int length); // tokenizes the program
 
 // construct a syntax tree according to the token list
 SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root);
+
+long int isInt(char* token); // check if str = int
+
+double isFloat(char* token); // check if str = float
 
 SyntaxTree* createNode(char* token);
 
