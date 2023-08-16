@@ -16,13 +16,11 @@ void printST(SyntaxTree* st, unsigned int level) {
 
 
 int main() {
-    char program[] = "(begin (+ a (/ g r p l c)) (* k (if ( < z g) q w)) (+ - ;))";
+    char program[] = "(begin (define r a) (* pi (* r r)))";
     ParseRet pt = parse(program);
     printST(pt.st, 0); 
 
-    //ParseRet pt = parse(program);
-    
-    //free(pt.sprogram);
-    //free(pt.tokenlist);
+    free(pt.sprogram);
+    free(pt.tokenlist);
     return 0;
 }

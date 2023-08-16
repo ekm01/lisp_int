@@ -133,7 +133,7 @@ SyntaxTree* createNode(char* token, unsigned int len) {
    exit(1);
 }
 
-SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, unsigned int y) {
+SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i) {
 
     if (strcmp(tokenlist.list[*i], "(") == 0) {
        (*i)++;
@@ -143,11 +143,11 @@ SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, 
                (*i)++;
            }
            
-           y = 0;
+           unsigned int y = 0;
            while (root->params[y] != NULL) {
                y++;
            }
-           root->params[y] = constructST(tokenlist, root->params[y], i, y);
+           root->params[y] = constructST(tokenlist, root->params[y], i);
            (*i)++;
        }
        return root;
@@ -166,13 +166,13 @@ ParseRet parse(char* program) {
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
+    
     unsigned int i = 0;
-    SyntaxTree* st = constructST(tokenlist, NULL, &i, 0);
+    SyntaxTree* st = constructST(tokenlist, NULL, &i);
     
     ParseRet pt;
     pt.st = st;
     pt.sprogram = sprogram;
     pt.tokenlist = tokenlist.list;
-    
     return pt;
 }

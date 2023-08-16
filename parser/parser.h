@@ -37,7 +37,7 @@ char* pretokenize(char* program); // insert spaces around parentheses and operat
 TokenList tokenize(char* program, unsigned int length); // tokenizes the program text, returns the tokenlist and size
 
 // construct a syntax tree according to the token list
-SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, unsigned int y);
+SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i);
 
 long int isInt(char* token); // check if str = int
 
