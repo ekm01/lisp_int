@@ -37,8 +37,17 @@ TokenList tokenize(char* program, unsigned int length) {
     
     // strtok() to tokenize the items separated by space
     const char* delim = " ";
+    
+    unsigned int y = 0;
+    unsigned int partrack = 0;
+
     char* token = strtok(program, delim);
     
+    if (strcmp(token, ")") == 0) {
+        fprintf(stderr, "Syntax Error occured!\n");
+        exit(1);
+    }
+
     TokenList tokenlist;
     tokenlist.list = (char**) malloc(length * sizeof(char*));
     
@@ -51,15 +60,32 @@ TokenList tokenize(char* program, unsigned int length) {
     unsigned int i = 0;
     while(token != NULL) {
         tokenlist.list[i] = token;
-        if (tokenlist.list[i] == NULL) {
-            fprintf(stderr, "Memory cannot be allocated!\n");
+        
+        if (strcmp(token, "(") == 0) {
+            y++;
+            partrack++;
+        }
+        else if (strcmp(token, ")") == 0) {
+            y++;
+            partrack--;
+        }
+
+        if (partrack < 0) {
+            fprintf(stderr, "Syntax Error occured!\n");
             exit(1);
-    }
+        }
+
         token = strtok(NULL, delim);
         i++;
     }
     
-    tokenlist.len = i;
+    if (partrack != 0) {
+            fprintf(stderr, "Syntax Error occured!\n");
+            exit(1);
+    }
+
+    tokenlist.len_par = i;
+    tokenlist.len = i - y;
     return tokenlist;
 }
 
@@ -85,84 +111,59 @@ double isFloat(char* token) {
     return 0.0;
 }
 
-SyntaxTree* createNode(char* token) {
+SyntaxTree* createNode(char* token, unsigned int len) {
     SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     if (newNode != NULL) {
         if(isInt(token) != 0) {
             newNode->token.val.intVal = isInt(token); 
-            newNode->token.type = NUMBER;
+            newNode->token.type = NUMBER_INT;
         }
         else if (isFloat(token) != 0) {
             newNode->token.val.dobVal = isFloat(token); 
-            newNode->token.type = NUMBER;
+            newNode->token.type = NUMBER_FLOAT;
         }
         else {
             newNode->token.val.symVal = token;
             newNode->token.type = SYMBOL;
         }
+        newNode->params = (SyntaxTree**) malloc(len * sizeof(SyntaxTree*));
         return newNode;
     }
    fprintf(stderr, "Memory cannot be allocated!\n");
    exit(1);
 }
 
-/*SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root) {
+SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, unsigned int y) {
 
-    if (strcmp(tokens[i], "(") == 0) {
-       i++;
-       while (strcmp(tokens[i], ")") != 0 && i < tokenNum) {
+    if (strcmp(tokenlist.list[*i], "(") == 0) {
+       (*i)++;
+       while (strcmp(tokenlist.list[*i], ")") != 0 && *i < tokenlist.len_par) {
            if (root == NULL) {
-               root = createNode(tokens[i]);
-               i++;
+               root = createNode(tokenlist.list[*i], tokenlist.len);
+               (*i)++;
            }
-           if (root->left == NULL) {
-               root->left = constructST(tokens, tokenNum, i, root->left);
-               i++;
+           
+           y = 0;
+           while (root->params[y] != NULL) {
+               y++;
            }
-           if (root->left != NULL && root->right == NULL) {
-               root->right = constructST(tokens, tokenNum, i, root->right);
-           }
-           i++;
+           root->params[y] = constructST(tokenlist, root->params[y], i, y);
+           (*i)++;
        }
-       i++;
-       if (root == NULL){
-           return NULL;
-       }
-
-       root->i = i;
        return root;
     }
-    else if (strcmp(tokens[i], ")") == 0) {
+    else if (strcmp(tokenlist.list[*i], ")") == 0) {
         fprintf(stderr, "Syntax Error occured!\n");
         exit(1);
     }
     else {
-        return createNode(tokens[i]);
+        return createNode(tokenlist.list[*i], tokenlist.len);
     }
     return NULL;
 }
 
-ParseRet parse(char* program) {
+/*ParseRet parse(char* program) {
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
-    SyntaxTree* leftSubtree = constructST(tokenlist.list, tokenlist.len, 0, NULL);
-
-    ParseRet pt;
-    pt.tokenlist = tokenlist.list;
-    pt.sprogram = sprogram;
-
-    if (leftSubtree != NULL){
-        if (leftSubtree->i > tokenlist.len - 1) {
-            pt.st = leftSubtree;
-            return pt;
-        }
-        else {
-            SyntaxTree* rightSubtree = constructST(tokenlist.list, tokenlist.len, leftSubtree->i, NULL);
-            leftSubtree->right = rightSubtree;
-            pt.st = leftSubtree;
-            return pt;
-        }
-    }
-    return pt;
 }*/

@@ -1,13 +1,13 @@
-#include <stdio.h>
-
 typedef struct TokenList {
     char** list;
-    unsigned int len;
+    unsigned int len_par; // number of tokens with parentheses
+    unsigned int len; // without parentheses
 } TokenList;
 
 typedef enum TokenType {
     SYMBOL,
-    NUMBER,
+    NUMBER_INT,
+    NUMBER_FLOAT
 } TokenType;
 
 typedef union Value {
@@ -37,12 +37,12 @@ char* pretokenize(char* program); // insert spaces around parentheses and operat
 TokenList tokenize(char* program, unsigned int length); // tokenizes the program text, returns the tokenlist and size
 
 // construct a syntax tree according to the token list
-SyntaxTree* constructST(char** tokens, unsigned int tokenNum, unsigned int i, SyntaxTree* root);
+SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, unsigned int y);
 
 long int isInt(char* token); // check if str = int
 
 double isFloat(char* token); // check if str = float
 
-SyntaxTree* createNode(char* token);
+SyntaxTree* createNode(char* token, unsigned int len);
 
 ParseRet parse(char* program);
