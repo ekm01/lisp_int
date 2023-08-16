@@ -162,8 +162,17 @@ SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i, 
     return NULL;
 }
 
-/*ParseRet parse(char* program) {
+ParseRet parse(char* program) {
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
-}*/
+    unsigned int i = 0;
+    SyntaxTree* st = constructST(tokenlist, NULL, &i, 0);
+    
+    ParseRet pt;
+    pt.st = st;
+    pt.sprogram = sprogram;
+    pt.tokenlist = tokenlist.list;
+    
+    return pt;
+}

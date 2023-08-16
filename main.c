@@ -3,17 +3,23 @@
 #include <stdlib.h>
 #include "parser/parser.h"
 
-int main() {
-    char program[] = "(begin (+ a (/ l c)) (* k (if ( < z g) q w)))";
+void printST(SyntaxTree* st, unsigned int level) {
+    if (st != NULL) {
+        printf("level %d: %s\n", level, st->token.val.symVal);
+        level++;
+        while (*st->params != NULL) {
+            printST(*st->params, level);
+            st->params++;
+        }
+    }
+}
 
-    
-    char* sprogram = pretokenize(program);
-    unsigned int length = strlen(sprogram) / 2;
-    TokenList tokenlist = tokenize(sprogram, length);
-    unsigned int i = 0;
-    SyntaxTree* st = constructST(tokenlist, NULL, &i, 0); 
-    printf("%s\n", st->params[0]->params[1]->token.val.symVal);
-    
+
+int main() {
+    char program[] = "(begin (+ a (/ g r p l c)) (* k (if ( < z g) q w)) (+ - ;))";
+    ParseRet pt = parse(program);
+    printST(pt.st, 0); 
+
     //ParseRet pt = parse(program);
     
     //free(pt.sprogram);
