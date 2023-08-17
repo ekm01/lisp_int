@@ -116,11 +116,11 @@ SyntaxTree* createNode(char* token, unsigned int len) {
     if (newNode != NULL) {
         if(isInt(token) != 0) {
             newNode->token.val.intVal = isInt(token); 
-            newNode->token.type = NUMBER_INT;
+            newNode->token.type = NUMBER;
         }
         else if (isFloat(token) != 0) {
             newNode->token.val.dobVal = isFloat(token); 
-            newNode->token.type = NUMBER_FLOAT;
+            newNode->token.type = NUMBER;
         }
         else {
             newNode->token.val.symVal = token;
@@ -148,6 +148,7 @@ SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i) 
                y++;
            }
            root->params[y] = constructST(tokenlist, root->params[y], i);
+           root->params_size = y + 1;
            (*i)++;
        }
        return root;

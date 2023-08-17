@@ -1,3 +1,6 @@
+#ifndef PARSER_H
+#define PARSER_H
+
 typedef struct TokenList {
     char** list;
     unsigned int len_par; // number of tokens with parentheses
@@ -6,8 +9,7 @@ typedef struct TokenList {
 
 typedef enum TokenType {
     SYMBOL,
-    NUMBER_INT,
-    NUMBER_FLOAT
+    NUMBER,
 } TokenType;
 
 typedef union Value {
@@ -24,6 +26,7 @@ typedef struct Token {
 typedef struct SyntaxTree {
     Token token;
     struct SyntaxTree** params;
+    unsigned int params_size;
 } SyntaxTree;
 
 typedef struct ParseRet {
@@ -46,3 +49,5 @@ double isFloat(char* token); // check if str = float
 SyntaxTree* createNode(char* token, unsigned int len);
 
 ParseRet parse(char* program);
+
+#endif

@@ -6,7 +6,12 @@
 
 void printST(SyntaxTree* st, unsigned int level) {
     if (st != NULL) {
-        printf("level %d: %s\n", level, st->token.val.symVal);
+        if (st->token.type == SYMBOL) {
+            printf("level %d: %s, param_size: %d\n", level, st->token.val.symVal, st->params_size);
+        }
+        else {
+            printf("level %d: %ld, param_size: %d\n", level, st->token.val.intVal, st->params_size);
+        } 
         level++;
         while (*st->params != NULL) {
             printST(*st->params, level);
@@ -16,21 +21,11 @@ void printST(SyntaxTree* st, unsigned int level) {
 }
 
 int main() {
-    /*char program[] = "(begin (define r a) (* pi (* r r)))";
+    char program[] = "(+ (+ 5 (+ 3 1)) (+ 3 (+ 6 1 )))";
     ParseRet pt = parse(program);
-    printST(pt.st, 0); 
-
+    printf("%ld\n", evaluate(pt.st));
     free(pt.sprogram);
-    free(pt.tokenlist);*/
-    FuncType func;
-    func.intfunc = addInt;
-    func.dobfunc = addDob;
-    
-    HashMap* map = init();
-    
-    insert(map, "+", func);
-    FuncType anan = get(map, "+");
-    printf("%ld\n", anan.intfunc(2, 5));
-    
+    free(pt.tokenlist);
+
     return 0;
 }
