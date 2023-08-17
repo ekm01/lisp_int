@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "parser/parser.h"
+#include "evaluator/evaluator.h"
 
 void printST(SyntaxTree* st, unsigned int level) {
     if (st != NULL) {
