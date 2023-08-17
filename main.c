@@ -15,13 +15,22 @@ void printST(SyntaxTree* st, unsigned int level) {
     }
 }
 
-
 int main() {
-    char program[] = "(begin (define r a) (* pi (* r r)))";
+    /*char program[] = "(begin (define r a) (* pi (* r r)))";
     ParseRet pt = parse(program);
     printST(pt.st, 0); 
 
     free(pt.sprogram);
-    free(pt.tokenlist);
+    free(pt.tokenlist);*/
+    FuncType func;
+    func.intfunc = addInt;
+    func.dobfunc = addDob;
+    
+    HashMap* map = init();
+    
+    insert(map, "+", func);
+    FuncType anan = get(map, "+");
+    printf("%ld\n", anan.intfunc(2, 5));
+    
     return 0;
 }

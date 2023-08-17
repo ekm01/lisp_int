@@ -109,3 +109,43 @@ long int leDob(double a, double b) {
     return 0;
 }
 
+unsigned int hash(char* key) {
+    unsigned int hash = 0;
+    while (*key != '\0') {
+        hash = (hash * 33) + (*key);
+        key++;
+    }
+    return hash % MAX_HASHMAP_SIZE;
+}
+
+HashMap* init() {
+    HashMap* map = (HashMap*) malloc(sizeof(HashMap));
+    if (map == NULL) {
+        fprintf(stderr, "Memory cannot be allocated!\n");
+        exit(1);
+    }
+    return map;
+}
+
+void insert(HashMap* map, char* key, FuncType func) {
+    unsigned int index = hash(key);
+    HashEntry* entry = (HashEntry*) malloc(sizeof(HashEntry));
+    if (entry == NULL) {
+        fprintf(stderr, "Memory cannot be allocated!\n");
+        exit(1);
+    }
+    entry->key = key;
+    entry->value = func;
+    map->map[index] = entry;
+}
+
+FuncType get(HashMap* map, char* key) {
+    unsigned int index = hash(key);
+    HashEntry* entry = map->map[index];
+    
+    if (entry == NULL) {
+        fprintf(stderr, "No such entry!\n");
+        exit(1);
+    }
+    return entry->value;
+}
