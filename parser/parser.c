@@ -116,11 +116,11 @@ SyntaxTree* createNode(char* token, unsigned int len) {
     if (newNode != NULL) {
         if(isInt(token) != 0) {
             newNode->token.val.intVal = isInt(token); 
-            newNode->token.type = NUMBER;
+            newNode->token.type = NUMBER_INT;
         }
         else if (isFloat(token) != 0) {
             newNode->token.val.dobVal = isFloat(token); 
-            newNode->token.type = NUMBER;
+            newNode->token.type = NUMBER_FLOAT;
         }
         else {
             newNode->token.val.symVal = token;
@@ -152,10 +152,6 @@ SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i) 
            (*i)++;
        }
        return root;
-    }
-    else if (strcmp(tokenlist.list[*i], ")") == 0) {
-        fprintf(stderr, "Syntax Error occured!\n");
-        exit(1);
     }
     else {
         return createNode(tokenlist.list[*i], tokenlist.len);

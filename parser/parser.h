@@ -9,7 +9,8 @@ typedef struct TokenList {
 
 typedef enum TokenType {
     SYMBOL,
-    NUMBER,
+    NUMBER_INT,
+    NUMBER_FLOAT,
 } TokenType;
 
 typedef union Value {

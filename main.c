@@ -21,9 +21,10 @@ void printST(SyntaxTree* st, unsigned int level) {
 }
 
 int main() {
-    char program[] = "(+ (+ 5 (+ 3 1)) (+ 3 (+ 6 1 )))";
+    char program[] = "(+ (abs(-1)) 5)";
     ParseRet pt = parse(program);
     printf("%ld\n", evaluate(pt.st));
+    printST(pt.st, 0);
     free(pt.sprogram);
     free(pt.tokenlist);
 
