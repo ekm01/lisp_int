@@ -21,7 +21,7 @@ void printST(SyntaxTree* st, unsigned int level) {
 }
 
 int main() {
-    char program[] = "(+ (abs(-1)) 5)";
+    char program[] = "(+ (- 5 (* 3 2)) (+ 3 (/ 6 (if (< 5  6) a (- -1)) )))";
     ParseRet pt = parse(program);
     printf("%ld\n", evaluate(pt.st));
     printST(pt.st, 0);

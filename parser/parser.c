@@ -17,7 +17,7 @@ char* pretokenize(char* program) {
 
     // add spaces around each operation and parentheses
     while(*program != '\0') {
-        if (*program == '(' || *program == ')' || *program == '+' || *program == '-' || *program == '*' || *program == '/') {
+        if (*program == '(' || *program == ')' || *program == '+' || *program == '*' || *program == '/') {
             sprogram[i] = ' ';
             sprogram[i + 1] = *program;
             sprogram[i + 2] = ' ';
@@ -89,37 +89,45 @@ TokenList tokenize(char* program, unsigned int length) {
     return tokenlist;
 }
 
-long int isInt(char* token) {
+IsIntRet isInt(char* token) {
     char* end;
     errno = 0;
-    long int res = strtol(token, &end, 10);
-    
+    long int val = strtol(token, &end, 10);
+    IsIntRet res;
+
     if (errno == 0 && *end == '\0') {
+        res.isInt = 1;
+        res.val = val;
         return res;
     }
-    return 0;
+    res.isInt = 0;
+    return res;
 }
 
-double isFloat(char* token) {
+IsFloatRet isFloat(char* token) {
     char* end;
     errno = 0;
-    double res = strtod(token, &end);
-    
+    double val = strtod(token, &end);
+    IsFloatRet res; 
+
     if (errno == 0 && *end == '\0') {
+        res.isFloat = 1;
+        res.val = val;
         return res;
     }
-    return 0.0;
+    res.isFloat = 0;
+    return res;
 }
 
 SyntaxTree* createNode(char* token, unsigned int len) {
     SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     if (newNode != NULL) {
-        if(isInt(token) != 0) {
-            newNode->token.val.intVal = isInt(token); 
+        if(isInt(token).isInt != 0) {
+            newNode->token.val.intVal = isInt(token).val; 
             newNode->token.type = NUMBER_INT;
         }
-        else if (isFloat(token) != 0) {
-            newNode->token.val.dobVal = isFloat(token); 
+        else if (isFloat(token).isFloat != 0) {
+            newNode->token.val.dobVal = isFloat(token).val; 
             newNode->token.type = NUMBER_FLOAT;
         }
         else {
@@ -141,6 +149,10 @@ SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i) 
            if (root == NULL) {
                root = createNode(tokenlist.list[*i], tokenlist.len);
                (*i)++;
+           }
+           
+           if (strcmp(tokenlist.list[*i], ")") == 0) {
+               break;
            }
            
            unsigned int y = 0;

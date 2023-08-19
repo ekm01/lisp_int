@@ -36,6 +36,16 @@ typedef struct ParseRet {
     char** tokenlist;
 } ParseRet;
 
+typedef struct IsIntRet {
+    int isInt;
+    long int val;
+} IsIntRet;
+
+typedef struct IsFloatRet {
+    int isFloat;
+    double val;
+} IsFloatRet;
+
 char* pretokenize(char* program); // insert spaces around parentheses and operators, returns new program
 
 TokenList tokenize(char* program, unsigned int length); // tokenizes the program text, returns the tokenlist and size
@@ -43,9 +53,9 @@ TokenList tokenize(char* program, unsigned int length); // tokenizes the program
 // construct a syntax tree according to the token list
 SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i);
 
-long int isInt(char* token); // check if str = int
+IsIntRet isInt(char* token); // check if str = int
 
-double isFloat(char* token); // check if str = float
+IsFloatRet isFloat(char* token); // check if str = float
 
 SyntaxTree* createNode(char* token, unsigned int len);
 
