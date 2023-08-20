@@ -4,150 +4,60 @@
 #include <stdbool.h>
 #include "evaluator.h"
 
-long int evaluate(SyntaxTree* st) {
+FuncRet evaluate(SyntaxTree* st, HashMap* hashmap) {
     if (st != NULL) {
        if (st->token.type == SYMBOL) {
-           unsigned int i = 0;
-           while (st->params[i] != NULL) {
-               if (strcmp(st->token.val.symVal, "+") == 0) {
-                   if (st->params_size == 2) {
-                       return evaluate(st->params[i]) + evaluate(st->params[i + 1]);
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, "-") == 0) {
-                   if (st->params_size == 1) {
-                       return evaluate(st->params[i]) * (-1);
-                   }
-                   else if (st->params_size == 2) {
-                       return evaluate(st->params[i]) - evaluate(st->params[i + 1]);
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params either 1 or 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, "*") == 0) {
-                   if (st->params_size == 2) {
-                       return evaluate(st->params[i]) * evaluate(st->params[i + 1]);
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, "/") == 0) {
-                   if (st->params_size == 2) {
-                       long int second = evaluate(st->params[i + 1]);
-                       if (second == 0) {
-                           fprintf(stderr, "Division by zero!\n");
-                           exit(1);
-                       }
-                       return evaluate(st->params[i]) / second;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-                   
-               }
-               else if (strcmp(st->token.val.symVal, "<") == 0) {
-                   if (st->params_size == 2) {
-                       if (evaluate(st->params[i]) < evaluate(st->params[i + 1])) {
-                           return true;
-                       }
-                       return false;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-                   
-               }
-               else if (strcmp(st->token.val.symVal, "<=") == 0) {
-                   if (st->params_size == 2) {
-                       if (evaluate(st->params[i]) <= evaluate(st->params[i + 1])) {
-                           return true;
-                       }
-                       return false;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, ">") == 0) {
-                   if (st->params_size == 2) {
-                       if (evaluate(st->params[i]) > evaluate(st->params[i + 1])) {
-                           return true;
-                       }
-                       return false;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, ">=") == 0) {
-                   if (st->params_size == 2) {
-                       if (evaluate(st->params[i]) >= evaluate(st->params[i + 1])) {
-                           return true;
-                       }
-                       return false;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, "=") == 0) {
-                   if (st->params_size == 2) {
-                       if (evaluate(st->params[i]) == evaluate(st->params[i + 1])) {
-                           return true;
-                       }
-                       return false;
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
-                       exit(1);
-                   }
-               }
-               else if (strcmp(st->token.val.symVal, "if") == 0) {
-                   if (st->params_size == 3) {
-                       bool a = evaluate(st->params[i]);
-                       if (a == true) {
-                           return evaluate(st->params[i + 1]);
-                       }
-                       return evaluate(st->params[i + 2]);
-                   }
-                   else {
-                       fprintf(stderr, "Expected number of params 3, but was %d\n", st->params_size);
-                       exit(1);                   }
-               }
-               else if (strcmp(st->token.val.symVal, "abs") == 0) {
-                   if (st->params_size == 1) {
-                       long int a = evaluate(st->params[i]);
-                       if (a < 0) {
-                           return a * (-1);
-                       }
-                       return a;
-                   }
-                   
-               }
-                
-               i++;
-           }
+           Func f = get(hashmap, st->token.val.symVal);
+           return f(st, hashmap);
        }
        else {
-           return st->token.val.intVal;
+           FuncRet res;
+           if (st->token.type == NUMBER_INT) {
+               res.type = INT;
+               res.val = malloc(sizeof(int));
+               *(int*)res.val = st->token.val.intVal;
+           }
+           else {
+               res.type = FLOAT;
+               res.val = malloc(sizeof(float));
+               *(float*)res.val = st->token.val.dobVal;
+           }
+           return res;
        }
 
     }
     fprintf(stderr, "Unidentified expression!\n");
     exit(1);
+}
+
+FuncRet add_o(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+
+    if (st->params_size == 2) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet second = evaluate(st->params[1], map);
+        FuncRet res;
+        if (first.type == FLOAT || second.type == FLOAT) {
+            printf("first: %f, second: %d\n",*(float*)first.val, *(int*)second.val);
+            res.val = malloc(sizeof(float));
+            *(float*)res.val = *(float*)first.val + *(float*)second.val;
+        }
+        else {
+            res.type = INT;
+            res.val = malloc(sizeof(int));
+            *(int*)res.val = *(int*)first.val + *(int*)second.val;
+        }
+        
+        free(first.val);
+        free(second.val);
+        return res;
+        
+    }
+    else {
+        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
+        exit(1);
+    }
 }
 
 unsigned int hash(char* key) {
@@ -185,8 +95,10 @@ Func get(HashMap* map, char* key) {
     HashEntry* entry = map->map[index];
 
     if (entry == NULL) {
-        fprintf(stderr, "No such entry!\n");
+        fprintf(stderr, "Unidentified expression!\n");
         exit(1);
     }
     return entry->value;
 }
+
+

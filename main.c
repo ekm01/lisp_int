@@ -21,10 +21,18 @@ void printST(SyntaxTree* st, unsigned int level) {
 }
 
 int main() {
-    char program[] = "(+ (- 5 (* 3 2)) (+ 3 (/ 6 (if (< 5  6) -1 (- -1)) )))";
+    HashMap* hm = init();
+    insert(hm, "+", add_o);
+
+    char program[] = "(+ 3 3)";
     ParseRet pt = parse(program);
-    printf("%ld\n", evaluate(pt.st));
-    printST(pt.st, 0);
+    FuncRet res = evaluate(pt.st, hm);
+    if (res.type == FLOAT) {
+        printf("result: %f\n", *(float*)res.val);
+    }
+    else {
+        printf("result: %d\n", *(int*)res.val);
+    }
     free(pt.sprogram);
     free(pt.tokenlist);
 
