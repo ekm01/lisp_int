@@ -22,9 +22,9 @@ void printST(SyntaxTree* st, unsigned int level) {
 
 int main() {
     HashMap* hm = init();
-    insert(hm, "+", add_o);
+    initOpMap(hm);
 
-    char program[] = "(+ (+ (+ 1. 2) (+ 3.2 3)) (+ -3.43 2))";
+    char program[] = "(if (> 43 4.4) 6 43)";
     ParseRet pt = parse(program);
     FuncRet res = evaluate(pt.st, hm);
     if (res.type == FLOAT) {
@@ -33,6 +33,7 @@ int main() {
     else {
         printf("result: %d\n", (int)*(double*)res.val);
     }
+    printST(pt.st, 0);
     free(pt.sprogram);
     free(pt.tokenlist);
 
