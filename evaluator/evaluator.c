@@ -8,8 +8,14 @@
 FuncRet evaluate(SyntaxTree* st, HashMap* hashmap) {
     if (st != NULL) {
        if (st->token.type == SYMBOL) {
-           Func f = get(hashmap, st->token.val.symVal);
-           return f(st, hashmap);
+           GetRet res = get(hashmap, st->token.val.symVal);
+           if (res.type == FUNCTION) {
+               Func f = res.val;
+               return f(st, hashmap);
+           }
+           else {
+               return evaluate(res.val, hashmap);
+           }
        }
        else {
            FuncRet res;
@@ -392,6 +398,40 @@ FuncRet abs_o(void* args, void* hashmap) {
     }
 }
 
+FuncRet begin(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+    if (st->params_size == 0) {
+        fprintf(stderr, "Expected number of params > 0, but was %d\n", st->params_size);
+        exit(1);
+    }
+    FuncRet res;
+    unsigned int i = 0;
+    while (i < st->params_size - 1) {
+        res = evaluate(st->params[i], map);
+        free(res.val);
+        i++;
+    }
+    res = evaluate(st->params[i], map);
+    return res;
+}
+
+FuncRet define(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+    if (st->params_size == 2) {
+        char* key = st->params[0]->token.val.symVal;
+        insert(map, key, st->params[1], VARIABLE);
+        FuncRet res;
+        res.val = NULL;
+        return res;
+    }
+    else {
+        fprintf(stderr, "Expected number of params > 0, but was %d\n", st->params_size);
+        exit(1);
+    }
+}
+
 unsigned int hash(char* key) {
     unsigned int hash = 0;
     while (*key != '\0') {
@@ -399,7 +439,7 @@ unsigned int hash(char* key) {
         key++;
     }
     return hash % MAX_HASHMAP_SIZE;
-}
+}   
 
 HashMap* init() {
     HashMap* map = (HashMap*) malloc(sizeof(HashMap));
@@ -410,7 +450,7 @@ HashMap* init() {
     return map;
 }
 
-void insert(HashMap* map, char* key, Func func) {
+void insert(HashMap* map, char* key, void* value, ValType type) {
     unsigned int index = hash(key);
     HashEntry* entry = (HashEntry*) malloc(sizeof(HashEntry));
     if (entry == NULL) {
@@ -418,31 +458,37 @@ void insert(HashMap* map, char* key, Func func) {
         exit(1);
     }
     entry->key = key;
-    entry->value = func;
+    entry->value = value;
+    entry->type = type;
     map->map[index] = entry;
 }
 
-Func get(HashMap* map, char* key) {
+GetRet get(HashMap* map, char* key) {
     unsigned int index = hash(key);
     HashEntry* entry = map->map[index];
-
     if (entry == NULL) {
         fprintf(stderr, "Unidentified expression!\n");
         exit(1);
     }
-    return entry->value;
+    
+    GetRet res;
+    res.type = entry->type;
+    res.val = entry->value;
+    return res;
 }
 
 void initOpMap(HashMap* map) {
-    insert(map, "+", add_o);
-    insert(map, "-", sub_o);
-    insert(map, "*", mul_o);
-    insert(map, "/", div_o);
-    insert(map, "<", l_o);
-    insert(map, "<=", le_o);
-    insert(map, ">", g_o);
-    insert(map, ">=", ge_o);
-    insert(map, "=", e_o);
-    insert(map, "if", if_o);
-    insert(map, "abs", abs_o);
+    insert(map, "+", add_o ,FUNCTION);
+    insert(map, "-", sub_o, FUNCTION);
+    insert(map, "*", mul_o, FUNCTION);
+    insert(map, "/", div_o, FUNCTION);
+    insert(map, "<", l_o, FUNCTION);
+    insert(map, "<=", le_o, FUNCTION);
+    insert(map, ">", g_o, FUNCTION);
+    insert(map, ">=", ge_o, FUNCTION);
+    insert(map, "=", e_o, FUNCTION);
+    insert(map, "if", if_o, FUNCTION);
+    insert(map, "abs", abs_o, FUNCTION);
+    insert(map, "begin", begin, FUNCTION);
+    insert(map, "define", define, FUNCTION);
 }

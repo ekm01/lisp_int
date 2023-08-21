@@ -24,7 +24,7 @@ int main() {
     HashMap* hm = init();
     initOpMap(hm);
 
-    char program[] = "(abs(- (+ (- 3 (if (- -5) 8 5)) (* 5 (if (< 4 6) (+ 4 6) (3 / 0))))))";
+    char program[] = "(begin (define r (- (+ 3 2) (- -4 1))) (* 2.34 (* r r)))";
     ParseRet pt = parse(program);
     FuncRet res = evaluate(pt.st, hm);
     if (res.type == FLOAT) {

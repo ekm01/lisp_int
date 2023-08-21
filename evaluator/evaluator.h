@@ -5,23 +5,33 @@
 // hashmap for tracking tokens
 #define MAX_HASHMAP_SIZE 1000
 
-typedef enum ValType {
+typedef enum ValTypeFunc {
     INT,
     FLOAT,
+    STRING, 
+} ValTypeFunc; 
+
+typedef enum ValType {
     FUNCTION,
-    LIST,
-} ValType; 
+    VARIABLE,
+} ValType;
+
+typedef struct GetRet {
+    ValType type;
+    void* val;
+} GetRet;
 
 typedef struct FuncRet {
     void* val;
-    ValType type;
+    ValTypeFunc type;
 } FuncRet;
 
 typedef FuncRet (*Func) (void*, void*);
 
 typedef struct HashEntry {
     char* key;
-    Func value;
+    void* value;
+    ValType type;
 } HashEntry;
 
 typedef struct HashMap {
@@ -32,9 +42,9 @@ unsigned int hash(char* key);
 
 HashMap* init();
 
-void insert(HashMap* map, char* key, Func func);
+void insert(HashMap* map, char* key, void* value, ValType type);
 
-Func get(HashMap* map, char* key);
+GetRet get(HashMap* map, char* key);
 
 void initOpMap(HashMap* map);
 
@@ -52,6 +62,9 @@ FuncRet g_o(void* args, void* hashmap); // greater than
 FuncRet ge_o(void* args, void* hashmap); // greater equals
 FuncRet e_o(void* args, void* hashmap); // equals
 
+// identity function
+FuncRet identity(void* args, void* hashmap);
+
 // conditional
 FuncRet if_o(void* args, void* hashmap);
 
@@ -59,6 +72,7 @@ FuncRet if_o(void* args, void* hashmap);
 FuncRet abs_o(void* args, void* hashmap);
 
 // fundamental operations
-
+FuncRet begin(void* args, void* hashmap);
+FuncRet define(void* args, void* hashmap);
 
 #endif
