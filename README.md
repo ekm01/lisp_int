@@ -1,2 +1,2 @@
 # lisp_int
-Simple Lisp Scheme interpreter with a REPL
+Lisp Scheme interpreter with a REPL
