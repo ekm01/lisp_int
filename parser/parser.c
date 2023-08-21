@@ -123,11 +123,11 @@ SyntaxTree* createNode(char* token, unsigned int len) {
     SyntaxTree* newNode = (SyntaxTree*) malloc(sizeof(SyntaxTree));
     if (newNode != NULL) {
         if(isInt(token).isInt != 0) {
-            newNode->token.val.intVal = isInt(token).val; 
+            newNode->token.val.numVal = isInt(token).val;
             newNode->token.type = NUMBER_INT;
         }
         else if (isFloat(token).isFloat != 0) {
-            newNode->token.val.dobVal = isFloat(token).val; 
+            newNode->token.val.numVal = isFloat(token).val;
             newNode->token.type = NUMBER_FLOAT;
         }
         else {

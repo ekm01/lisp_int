@@ -15,8 +15,7 @@ typedef enum TokenType {
 
 typedef union Value {
    char* symVal; // value of a symbol token
-   long int intVal; // actual value of a number token
-   double dobVal;
+   double numVal; // value of a number token
 } Value;
 
 typedef struct Token {

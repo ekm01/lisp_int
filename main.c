@@ -10,7 +10,7 @@ void printST(SyntaxTree* st, unsigned int level) {
             printf("level %d: %s, param_size: %d\n", level, st->token.val.symVal, st->params_size);
         }
         else {
-            printf("level %d: %ld, param_size: %d\n", level, st->token.val.intVal, st->params_size);
+            printf("level %d: %f, param_size: %d\n", level, st->token.val.numVal, st->params_size);
         } 
         level++;
         while (*st->params != NULL) {
@@ -24,14 +24,14 @@ int main() {
     HashMap* hm = init();
     insert(hm, "+", add_o);
 
-    char program[] = "(+ 3 3)";
+    char program[] = "(+ (+ 4 6) (+ -3.43 2))";
     ParseRet pt = parse(program);
     FuncRet res = evaluate(pt.st, hm);
     if (res.type == FLOAT) {
-        printf("result: %f\n", *(float*)res.val);
+        printf("result: %f\n", (float)*(double*)res.val);
     }
     else {
-        printf("result: %d\n", *(int*)res.val);
+        printf("result: %d\n", (int)*(double*)res.val);
     }
     free(pt.sprogram);
     free(pt.tokenlist);

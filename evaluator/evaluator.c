@@ -14,14 +14,12 @@ FuncRet evaluate(SyntaxTree* st, HashMap* hashmap) {
            FuncRet res;
            if (st->token.type == NUMBER_INT) {
                res.type = INT;
-               res.val = malloc(sizeof(int));
-               *(int*)res.val = st->token.val.intVal;
            }
            else {
                res.type = FLOAT;
-               res.val = malloc(sizeof(float));
-               *(float*)res.val = st->token.val.dobVal;
            }
+           res.val = malloc(sizeof(double));
+           *(double*)res.val = st->token.val.numVal;
            return res;
        }
 
@@ -38,21 +36,18 @@ FuncRet add_o(void* args, void* hashmap) {
         FuncRet first = evaluate(st->params[0], map);
         FuncRet second = evaluate(st->params[1], map);
         FuncRet res;
-        if (first.type == FLOAT || second.type == FLOAT) {
-            printf("first: %f, second: %d\n",*(float*)first.val, *(int*)second.val);
-            res.val = malloc(sizeof(float));
-            *(float*)res.val = *(float*)first.val + *(float*)second.val;
+        if (first.type == INT && second.type == INT) {
+            res.type = INT;
         }
         else {
-            res.type = INT;
-            res.val = malloc(sizeof(int));
-            *(int*)res.val = *(int*)first.val + *(int*)second.val;
+            res.type = FLOAT;
         }
-        
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = *(double*) first.val + *(double*) second.val;
+
         free(first.val);
         free(second.val);
         return res;
-        
     }
     else {
         fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
@@ -100,5 +95,4 @@ Func get(HashMap* map, char* key) {
     }
     return entry->value;
 }
-
 
