@@ -20,22 +20,30 @@ void printST(SyntaxTree* st, unsigned int level) {
     }
 }
 
+void repl() {
+    while (1) {
+        printf("lisp_int>>  ");
+        char program[1000];
+        fgets(program, sizeof(program), stdin);
+        program[strcspn(program, "\n")] = '\0';
+        HashMap* hm = init();
+        initOpMap(hm);
+        ParseRet pt = parse(program);
+        FuncRet res = evaluate(pt.st, hm);
+        if (res.type == FLOAT) {
+            printf("%f\n", (float)*(double*)res.val);
+        }
+        else {
+            printf("%d\n", (int)*(double*)res.val);
+        }
+        free(pt.sprogram);
+        free(pt.tokenlist);
+        free(res.val);
+    }
+}
+
 int main() {
-    HashMap* hm = init();
-    initOpMap(hm);
-
-    char program[] = "(begin (define r (- (+ 3 2) (- -4 1))) (* 2.34 (* r r)))";
-    ParseRet pt = parse(program);
-    FuncRet res = evaluate(pt.st, hm);
-    if (res.type == FLOAT) {
-        printf("result: %f\n", (float)*(double*)res.val);
-    }
-    else {
-        printf("result: %d\n", (int)*(double*)res.val);
-    }
+    repl();
     //printST(pt.st, 0);
-    free(pt.sprogram);
-    free(pt.tokenlist);
-
     return 0;
 }
