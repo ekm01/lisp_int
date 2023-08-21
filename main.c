@@ -24,7 +24,7 @@ int main() {
     HashMap* hm = init();
     insert(hm, "+", add_o);
 
-    char program[] = "(+ (+ 4 6) (+ -3.43 2))";
+    char program[] = "(+ (+ (+ 1. 2) (+ 3.2 3)) (+ -3.43 2))";
     ParseRet pt = parse(program);
     FuncRet res = evaluate(pt.st, hm);
     if (res.type == FLOAT) {

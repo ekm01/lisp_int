@@ -55,6 +55,87 @@ FuncRet add_o(void* args, void* hashmap) {
     }
 }
 
+FuncRet sub_o(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+
+    if (st->params_size == 2) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet second = evaluate(st->params[1], map);
+        FuncRet res;
+        if (first.type == INT && second.type == INT) {
+            res.type = INT;
+        }
+        else {
+            res.type = FLOAT;
+        }
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = (*(double*) first.val) - (*(double*) second.val);
+
+        free(first.val);
+        free(second.val);
+        return res;
+    }
+    else {
+        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
+        exit(1);
+    }
+}
+
+FuncRet mul_o(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+
+    if (st->params_size == 2) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet second = evaluate(st->params[1], map);
+        FuncRet res;
+        if (first.type == INT && second.type == INT) {
+            res.type = INT;
+        }
+        else {
+            res.type = FLOAT;
+        }
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = (*(double*) first.val) * (*(double*) second.val);
+
+        free(first.val);
+        free(second.val);
+        return res;
+    }
+    else {
+        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
+        exit(1);
+    }
+}
+
+FuncRet div_o(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+
+    if (st->params_size == 2) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet second = evaluate(st->params[1], map);
+        FuncRet res;
+        if (first.type == INT && second.type == INT) {
+            res.type = INT;
+        }
+        else {
+            res.type = FLOAT;
+        }
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = (*(double*) first.val) * (*(double*) second.val);
+
+        free(first.val);
+        free(second.val);
+        return res;
+    }
+    else {
+        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
+        exit(1);
+    }
+}
+
 unsigned int hash(char* key) {
     unsigned int hash = 0;
     while (*key != '\0') {

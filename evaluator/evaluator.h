@@ -42,14 +42,14 @@ FuncRet evaluate(SyntaxTree* st, HashMap* hashmap);
 
 // arithmetic binary operations
 FuncRet add_o(void* args, void* hashmap);
-FuncRet sub_o(SyntaxTree* st);
-FuncRet mul_o(SyntaxTree* st);
-FuncRet div_o(SyntaxTree* st);
-FuncRet l_o(SyntaxTree* st); // less than
-FuncRet le_o(SyntaxTree* st); // less equals
-FuncRet g_o(SyntaxTree* st); // greater than
-FuncRet ge_o(SyntaxTree* st); // greater equals
-FuncRet e_o(SyntaxTree* st); // equals
+FuncRet sub_o(void* args, void* hashmap);
+FuncRet mul_o(void* args, void* hashmap);
+FuncRet div_o(void* args, void* hashmap);
+FuncRet l_o(void* args, void* hashmap); // less than
+FuncRet le_o(void* args, void* hashmap); // less equals
+FuncRet g_o(void* args, void* hashmap); // greater than
+FuncRet ge_o(void* args, void* hashmap); // greater equals
+FuncRet e_o(void* args, void* hashmap); // equals
 
 // other math operations
 FuncRet abso(SyntaxTree* st);
