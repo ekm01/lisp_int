@@ -24,7 +24,7 @@ int main() {
     HashMap* hm = init();
     initOpMap(hm);
 
-    char program[] = "(if (> 43 4.4) 6 43)";
+    char program[] = "(abs(- (+ (- 3 (if (- -5) 8 5)) (* 5 (if (< 4 6) (+ 4 6) (3 / 0))))))";
     ParseRet pt = parse(program);
     FuncRet res = evaluate(pt.st, hm);
     if (res.type == FLOAT) {
@@ -33,7 +33,7 @@ int main() {
     else {
         printf("result: %d\n", (int)*(double*)res.val);
     }
-    printST(pt.st, 0);
+    //printST(pt.st, 0);
     free(pt.sprogram);
     free(pt.tokenlist);
 

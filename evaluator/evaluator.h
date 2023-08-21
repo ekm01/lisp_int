@@ -56,7 +56,7 @@ FuncRet e_o(void* args, void* hashmap); // equals
 FuncRet if_o(void* args, void* hashmap);
 
 // other math operations
-FuncRet abso(SyntaxTree* st);
+FuncRet abs_o(void* args, void* hashmap);
 
 // fundamental operations
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include "evaluator.h"
 
 FuncRet evaluate(SyntaxTree* st, HashMap* hashmap) {
@@ -75,9 +76,24 @@ FuncRet sub_o(void* args, void* hashmap) {
         free(first.val);
         free(second.val);
         return res;
+    } 
+    else if (st->params_size == 1) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet res;
+        if (first.type == INT) {
+            res.type = INT;
+        }
+        else {
+            res.type = FLOAT;
+        }
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = (*(double*) first.val) * (-1);
+
+        free(first.val);
+        return res;
     }
     else {
-        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
+        fprintf(stderr, "Expected number of params 1 or 2, but was %d\n", st->params_size);
         exit(1);
     }
 }
@@ -353,6 +369,29 @@ FuncRet if_o(void* args, void* hashmap) {
     }
 }
 
+FuncRet abs_o(void* args, void* hashmap) {
+    SyntaxTree* st = (SyntaxTree*) args;
+    HashMap* map = (HashMap*) hashmap;
+    if (st->params_size == 1) {
+        FuncRet first = evaluate(st->params[0], map);
+        FuncRet res;
+        if (first.type == INT) {
+            res.type = INT;
+        }
+        else {
+            res.type = FLOAT;
+        }
+        res.val = malloc(sizeof(double));
+        *(double*) res.val = fabs(*(double*) first.val); 
+        free(first.val);
+        return res;
+    }
+    else {
+        fprintf(stderr, "Expected number of params 1, but was %d\n", st->params_size);
+        exit(1);
+    }
+}
+
 unsigned int hash(char* key) {
     unsigned int hash = 0;
     while (*key != '\0') {
@@ -405,4 +444,5 @@ void initOpMap(HashMap* map) {
     insert(map, ">=", ge_o);
     insert(map, "=", e_o);
     insert(map, "if", if_o);
+    insert(map, "abs", abs_o);
 }
