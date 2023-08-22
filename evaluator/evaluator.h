@@ -8,7 +8,8 @@
 typedef enum ValTypeFunc {
     INT,
     FLOAT,
-    STRING, 
+    STRING,
+    VOID,
 } ValTypeFunc; 
 
 typedef enum ValType {

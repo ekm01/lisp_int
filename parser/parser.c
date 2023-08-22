@@ -135,6 +135,9 @@ SyntaxTree* createNode(char* token, unsigned int len) {
             newNode->token.type = SYMBOL;
         }
         newNode->params = (SyntaxTree**) malloc(len * sizeof(SyntaxTree*));
+        for (int i = 0; i < len; i++) {
+            newNode->params[i] = NULL;
+        }
         return newNode;
     }
    fprintf(stderr, "Memory cannot be allocated!\n");
@@ -142,7 +145,6 @@ SyntaxTree* createNode(char* token, unsigned int len) {
 }
 
 SyntaxTree* constructST(TokenList tokenlist, SyntaxTree* root, unsigned int* i) {
-
     if (strcmp(tokenlist.list[*i], "(") == 0) {
        (*i)++;
        while (strcmp(tokenlist.list[*i], ")") != 0 && *i < tokenlist.len_par) {
@@ -175,13 +177,12 @@ ParseRet parse(char* program) {
     char* sprogram = pretokenize(program);
     unsigned int length = strlen(sprogram) / 2;
     TokenList tokenlist = tokenize(sprogram, length);
-    
     unsigned int i = 0;
     SyntaxTree* st = constructST(tokenlist, NULL, &i);
-    
     ParseRet pt;
     pt.st = st;
     pt.sprogram = sprogram;
     pt.tokenlist = tokenlist.list;
+    
     return pt;
 }

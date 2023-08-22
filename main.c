@@ -4,46 +4,43 @@
 #include "parser/parser.h"
 #include "evaluator/evaluator.h"
 
-void printST(SyntaxTree* st, unsigned int level) {
+void freeST(SyntaxTree* st) {
     if (st != NULL) {
-        if (st->token.type == SYMBOL) {
-            printf("level %d: %s, param_size: %d\n", level, st->token.val.symVal, st->params_size);
+        unsigned int i = 0;
+        while (st->params[i] != NULL) {
+            freeST(st->params[i]);
+            i++;
         }
-        else {
-            printf("level %d: %f, param_size: %d\n", level, st->token.val.numVal, st->params_size);
-        } 
-        level++;
-        while (*st->params != NULL) {
-            printST(*st->params, level);
-            st->params++;
-        }
+        free(st->params[i]);
     }
 }
 
 void repl() {
+    HashMap* hm = init();
+    initOpMap(hm);
     while (1) {
         printf("lisp_int>>  ");
         char program[1000];
         fgets(program, sizeof(program), stdin);
         program[strcspn(program, "\n")] = '\0';
-        HashMap* hm = init();
-        initOpMap(hm);
+
         ParseRet pt = parse(program);
         FuncRet res = evaluate(pt.st, hm);
         if (res.type == FLOAT) {
             printf("%f\n", (float)*(double*)res.val);
         }
-        else {
+        else if (res.type == INT) {
             printf("%d\n", (int)*(double*)res.val);
         }
         free(pt.sprogram);
         free(pt.tokenlist);
         free(res.val);
+        freeST(pt.st);
     }
 }
 
 int main() {
     repl();
-    //printST(pt.st, 0);
+    
     return 0;
 }

@@ -423,10 +423,11 @@ FuncRet define(void* args, void* hashmap) {
         insert(map, key, st->params[1], VARIABLE);
         FuncRet res;
         res.val = NULL;
+        res.type = VOID;
         return res;
     }
     else {
-        fprintf(stderr, "Expected number of params > 0, but was %d\n", st->params_size);
+        fprintf(stderr, "Expected number of params 2, but was %d\n", st->params_size);
         exit(1);
     }
 }
