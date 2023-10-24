@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -Wall -I.
+CC = clang
+CFLAGS = --debug -I.
 
 SRCDIR = .
 PARSERDIR = parser
